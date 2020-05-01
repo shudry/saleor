@@ -22,7 +22,7 @@ def new_get_current(self, request=None):
         site_id = settings.SITE_ID
         if site_id not in THREADED_SITE_CACHE:
             with lock:
-                site = self.prefetch_related("settings").filter(pk=site_id)[0]
+                site = self.prefetch_related("settings").filter(pk=site_id).first()
                 THREADED_SITE_CACHE[site_id] = site
         return THREADED_SITE_CACHE[site_id]
     elif request:
@@ -33,7 +33,7 @@ def new_get_current(self, request=None):
                 with lock:
                     site = self.prefetch_related("settings").filter(
                         domain__iexact=host
-                    )[0]
+                    ).first()
                     THREADED_SITE_CACHE[host] = site
             return THREADED_SITE_CACHE[host]
         except Site.DoesNotExist:
@@ -43,7 +43,7 @@ def new_get_current(self, request=None):
                 with lock:
                     site = self.prefetch_related("settings").filter(
                         domain__iexact=domain
-                    )[0]
+                    ).first()
                     THREADED_SITE_CACHE[domain] = site
         return THREADED_SITE_CACHE[domain]
 
@@ -62,7 +62,7 @@ def new_clear_cache(self):
 
 
 def new_get_by_natural_key(self, domain):
-    return self.prefetch_related("settings").filter(domain__iexact=domain)[0]
+    return self.prefetch_related("settings").filter(domain__iexact=domain).first()
 
 
 def patch_contrib_sites():
